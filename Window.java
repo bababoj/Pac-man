@@ -33,43 +33,32 @@ public class Window extends Application {
         VBox bottomScene = new VBox();
         bottomScene.setSpacing(0);
 
+//        Maze maze = new Maze();
+//
+      //    int[][] mazeData = maze.getMaze();
+
+//        int mazeWidth = mazeData[0].length;
+//        int mazeHeight = mazeData.length;
+//
+//        double cellWidth = 448.0 / mazeWidth;
+//        double cellHeight = 496.0 / mazeHeight;
+
+
+//        for (int row = 0; row < mazeHeight; row++) {
+//            HBox rowBox = new HBox();
+//            for (int col = 0; col < mazeWidth; col++) {
+//                int cellValue = mazeData[row][col];
+//                bottomScene.getChildren().add(maze.createTile(cellValue, cellWidth, cellHeight));
+//            }
+//        }
         Maze maze = new Maze();
-
-        int[][] mazeData = maze.getMaze();
-
-        int mazeWidth = mazeData[0].length;
-        int mazeHeight = mazeData.length;
-
-        double cellWidth = 448.0 / mazeWidth;
-        double cellHeight = 496.0 / mazeHeight;
-
-
-        for (int row = 0; row < mazeHeight; row++) {
-            HBox rowBox = new HBox();
-            for (int col = 0; col < mazeWidth; col++) {
-                Rectangle cell = new Rectangle(cellWidth, cellHeight);
-                int cellValue = mazeData[row][col];
-
-                if (cellValue == 0) {
-                    cell.setFill(Color.BLACK);
-
-                } else if (cellValue == 1) {
-                    cell.setFill(Color.BLACK);
-
-                }else if (cellValue == 2){
-                    cell.setFill(Color.BLUE);
-                    // cell.setStyle("-fx-arc-width: 35; -fx-arc-height: 35; -fx-background-color: black;"); // Установка радиуса закругления
-                }
-                  rowBox.getChildren().add(cell);
-            }
-            bottomScene.getChildren().add(rowBox);
-
-        }
+        Group mazeGroup = maze.createMaze(448.0 / 28, 496.0 / 31, maze.getMaze());
+        bottomScene.getChildren().add(mazeGroup);
 
         VBox root = new VBox();
         root.getChildren().addAll(topSceneObject.getRoot(), bottomScene);
 
-        Scene scene = new Scene(root, 448, 521, Color.BLACK);
+        Scene scene = new Scene(root, 448, 544, Color.BLACK);
         primaryStage.setScene(scene);
 
         primaryStage.show();
