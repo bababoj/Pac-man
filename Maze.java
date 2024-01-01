@@ -50,7 +50,7 @@ public class Maze {
     private void classicMaze() {
         for (int i = 0; i < maze.length; i++) {
             for (int j = 0; j < COLUMNS / 2; j++) {
-                maze[i][j] = CellType.EMPTY;
+                maze[i][j] = CellType.POINTS;
                 switch (i) {
                     case (0):
                     case (30):
@@ -119,6 +119,11 @@ public class Maze {
                         maze[i][13] = CellType.WALL;
                         break;
                     case (10):
+                        maze[i][0] = CellType.EMPTY;
+                        maze[i][1] = CellType.EMPTY;
+                        maze[i][2] = CellType.EMPTY;
+                        maze[i][3] = CellType.EMPTY;
+                        maze[i][4] = CellType.EMPTY;
                         maze[i][5] = CellType.WALL;
                         maze[i][7] = CellType.WALL;
                         maze[i][8] = CellType.WALL;
@@ -129,20 +134,37 @@ public class Maze {
                         break;
                     case (11):
                     case (17):
+                        maze[i][0] = CellType.EMPTY;
+                        maze[i][1] = CellType.EMPTY;
+                        maze[i][2] = CellType.EMPTY;
+                        maze[i][3] = CellType.EMPTY;
+                        maze[i][4] = CellType.EMPTY;
                         maze[i][5] = CellType.WALL;
                         maze[i][7] = CellType.WALL;
                         maze[i][8] = CellType.WALL;
                         break;
                     case (12):
+                        maze[i][0] = CellType.EMPTY;
+                        maze[i][1] = CellType.EMPTY;
+                        maze[i][2] = CellType.EMPTY;
+                        maze[i][3] = CellType.EMPTY;
+                        maze[i][4] = CellType.EMPTY;
                         maze[i][5] = CellType.WALL;
                         maze[i][7] = CellType.WALL;
                         maze[i][8] = CellType.WALL;
                         maze[i][10] = CellType.WALL;
                         maze[i][11] = CellType.WALL;
                         maze[i][12] = CellType.WALL;
+                        maze[i][13] = CellType.EMPTY;
                         break;
                     case (13):
                     case (15):
+                        maze[i][11] = CellType.EMPTY;
+                        maze[i][12] = CellType.EMPTY;
+                        maze[i][13] = CellType.EMPTY;
+                        maze[i][14] = CellType.EMPTY;
+                        maze[i][15] = CellType.EMPTY;
+                        maze[i][16] = CellType.EMPTY;
                         maze[i][0] = CellType.WALL;
                         maze[i][1] = CellType.WALL;
                         maze[i][2] = CellType.WALL;
@@ -154,10 +176,21 @@ public class Maze {
                         maze[i][10] = CellType.WALL;
                         break;
                     case (14):
+                        maze[i][11] = CellType.EMPTY;
+                        maze[i][12] = CellType.EMPTY;
+                        maze[i][13] = CellType.EMPTY;
+                        maze[i][14] = CellType.EMPTY;
+                        maze[i][15] = CellType.EMPTY;
+                        maze[i][16] = CellType.WALL;
                         maze[i][10] = CellType.WALL;
                         break;
                     case (16):
                     case (18):
+                        maze[i][0] = CellType.EMPTY;
+                        maze[i][1] = CellType.EMPTY;
+                        maze[i][2] = CellType.EMPTY;
+                        maze[i][3] = CellType.EMPTY;
+                        maze[i][4] = CellType.EMPTY;
                         maze[i][5] = CellType.WALL;
                         maze[i][7] = CellType.WALL;
                         maze[i][8] = CellType.WALL;

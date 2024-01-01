@@ -15,6 +15,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import lombok.Getter;
+import lombok.Setter;
 
 public class GameManager extends Application {
     private static int CELL_SIZE;
@@ -24,6 +26,9 @@ public class GameManager extends Application {
     private  Maze maze;
 
     private Timeline pacmanAnimation;
+    @Getter@Setter
+    private  CellType[][] mazeArray;
+    private CellType[][] finalMaze;
 
     public static void main(String[] args) {
         launch(args);
@@ -35,10 +40,20 @@ public class GameManager extends Application {
     public void start(Stage primaryStage) {
         // Создаем лабиринт
         maze = new Maze();
-        pacman = new Pacman(maze);
+        mazeArray = maze.getMaze();
+        pacman = new Pacman(mazeArray);
+
         CELL_SIZE = maze.getCELL_SIZE();
         ROWS = maze.getROWS();
         COLUMNS = maze.getCOLUMNS();
+
+        pacman.countProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.intValue() == 300) {
+                System.out.println("Congratulations, you won!");
+                primaryStage.close();
+            }
+        });
+
 //
 //        // Создаем JavaFX Canvas для отображения лабиринта
 //        Canvas canvas = new Canvas(COLUMNS * CELL_SIZE, ROWS * CELL_SIZE);
@@ -89,8 +104,10 @@ public class GameManager extends Application {
             }
         });
 
+
         primaryStage.setScene(scene);
         primaryStage.show();
+
 
         pacmanAnimation.play();
 
@@ -143,7 +160,7 @@ private void initializePacmanAnimation() {
 
 
     private void drawMaze(GraphicsContext gc) {
-        CellType[][] mazeArray = maze.getMaze();
+        finalMaze = pacman.getMazeArray();
 
         for (int i = 0; i < mazeArray.length; i++) {
             for (int j = 0; j < mazeArray[i].length; j++) {
@@ -159,6 +176,16 @@ private void initializePacmanAnimation() {
                     double startX = j * CELL_SIZE + (CELL_SIZE - innerSquareSize) / 2;
                     double startY = i * CELL_SIZE + (CELL_SIZE - innerSquareSize) / 2;
                     gc.fillRect(startX, startY, innerSquareSize, innerSquareSize);
+                } else if(mazeArray[i][j] == CellType.POINTS){
+                    gc.setFill(Color.BLACK);
+                    gc.fillRect(j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+
+                    gc.setFill(Color.GREY);
+                    double circleSize = 4;
+                    double centerX = j * CELL_SIZE + (CELL_SIZE - circleSize) / 2;
+                    double centerY = i * CELL_SIZE + (CELL_SIZE - circleSize) / 2;
+                    gc.fillOval(centerX, centerY, circleSize, circleSize);
+
                 }
             }
         }
