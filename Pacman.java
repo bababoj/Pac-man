@@ -52,7 +52,7 @@ class Pacman {
         switch (direction) {
             case UP:
                 if (y > 0 && mazeArray[y - 1][x] != CellType.WALL) {
-                    if(mazeArray[y][x] == CellType.POINTS){
+                    if(mazeArray[y][x] == CellType.POINTS || mazeArray[y][x] == CellType.BOOSTER){
                         mazeArray[y][x] = CellType.EMPTY;
                       //  count++;
                         setCount(getCount() + 1);
@@ -62,7 +62,7 @@ class Pacman {
                 break;
             case DOWN:
                 if (y < maze.getROWS() - 1 && mazeArray[y + 1][x] != CellType.WALL) {
-                    if(mazeArray[y][x] == CellType.POINTS){
+                    if(mazeArray[y][x] == CellType.POINTS || mazeArray[y][x] == CellType.BOOSTER){
                         mazeArray[y][x] = CellType.EMPTY;
                         setCount(getCount() + 1);
                     }
@@ -71,7 +71,7 @@ class Pacman {
                 break;
             case LEFT:
                 if (x > 0 && mazeArray[y][x - 1] != CellType.WALL) {
-                    if(mazeArray[y][x] == CellType.POINTS){
+                    if(mazeArray[y][x] == CellType.POINTS || mazeArray[y][x] == CellType.BOOSTER ){
                         mazeArray[y][x] = CellType.EMPTY;
                         setCount(getCount() + 1);
                     }
@@ -86,7 +86,7 @@ class Pacman {
                 break;
             case RIGHT:
                 if (x < maze.getCOLUMNS() - 1 && mazeArray[y][x + 1] != CellType.WALL) {
-                    if(mazeArray[y][x] == CellType.POINTS){
+                    if(mazeArray[y][x] == CellType.POINTS || mazeArray[y][x] == CellType.BOOSTER){
                         mazeArray[y][x] = CellType.EMPTY;
                         setCount(getCount() + 1);
                     }

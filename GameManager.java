@@ -10,8 +10,8 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.control.Label;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -31,18 +31,18 @@ public class GameManager extends Application {
 
     @Getter@Setter
     private  CellType[][] mazeArray;
-    private CellType[][] finalMaze;
 
     private Ghost ghost1;
     private Ghost ghost2;
     private Ghost ghost3;
     private Ghost ghost4;
 
+    private Label livesLabel;
+    private Label scoreLabel;
+
     public static void main(String[] args) {
         launch(args);
     }
-
-
 
     @Override
     public void start(Stage primaryStage) {
@@ -69,10 +69,33 @@ public class GameManager extends Application {
         Canvas canvas = new Canvas(COLUMNS * CELL_SIZE, ROWS * CELL_SIZE);
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        StackPane root = new StackPane();
-        root.getChildren().add(canvas);
+        BorderPane root = new BorderPane();
 
-        Scene scene = new Scene(root, COLUMNS * CELL_SIZE, ROWS * CELL_SIZE);
+        // Создаем HBox для размещения элементов верхней панели
+        HBox infoPanel = new HBox();
+        infoPanel.setSpacing(20); // расстояние между элементами
+        infoPanel.setStyle("-fx-background-color: black;");
+
+        // Создаем Label для отображения количества жизней
+        livesLabel = new Label("Lives: " + (3 - loseAttempts));
+        livesLabel.setTextFill(Color.WHITE); // устанавливаем белый цвет текста
+        infoPanel.getChildren().add(livesLabel);
+
+        // Создаем Label для отображения счета
+        scoreLabel = new Label("Score: " + pacman.getCount());
+        scoreLabel.setTextFill(Color.WHITE); // устанавливаем белый цвет текста
+        infoPanel.getChildren().add(scoreLabel);
+
+        root.setTop(infoPanel);
+        root.setCenter(canvas);
+
+        Scene scene = new Scene(root, COLUMNS * CELL_SIZE, ROWS * CELL_SIZE + CELL_SIZE);
+
+
+        //   Scene scene = new Scene(root, COLUMNS * CELL_SIZE, ROWS * CELL_SIZE);
+
+
+        // Scene scene = new Scene(root, COLUMNS * CELL_SIZE, ROWS * CELL_SIZE);
 
         Duration duration = Duration.millis(200);  // Уменьшенный интервал времени
         KeyFrame keyFrame = new KeyFrame(duration, event -> {
@@ -140,6 +163,11 @@ public class GameManager extends Application {
             pacman.setX(pacman.getInitialX());
             pacman.setY(pacman.getInitialY());
         }
+        livesLabel.setText("Lives: " + (3 - loseAttempts));
+
+        // Обновляем Label с счетом
+        scoreLabel.setText("Score: " + pacman.getCount() + "/ 300");
+
     }
 
 
@@ -157,7 +185,7 @@ public class GameManager extends Application {
 
 
     private void drawMaze(GraphicsContext gc) {
-        finalMaze = pacman.getMazeArray();
+       // CellType[][] finalMaze = pacman.getMazeArray();
 
         for (int i = 0; i < mazeArray.length; i++) {
             for (int j = 0; j < mazeArray[i].length; j++) {
@@ -179,6 +207,16 @@ public class GameManager extends Application {
 
                     gc.setFill(Color.GREY);
                     double circleSize = 4;
+                    double centerX = j * CELL_SIZE + (CELL_SIZE - circleSize) / 2;
+                    double centerY = i * CELL_SIZE + (CELL_SIZE - circleSize) / 2;
+                    gc.fillOval(centerX, centerY, circleSize, circleSize);
+
+                }else if(mazeArray[i][j] == CellType.BOOSTER){
+                    gc.setFill(Color.BLACK);
+                    gc.fillRect(j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+
+                    gc.setFill(Color.WHITE);
+                    double circleSize = 6;
                     double centerX = j * CELL_SIZE + (CELL_SIZE - circleSize) / 2;
                     double centerY = i * CELL_SIZE + (CELL_SIZE - circleSize) / 2;
                     gc.fillOval(centerX, centerY, circleSize, circleSize);

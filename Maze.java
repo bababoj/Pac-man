@@ -61,8 +61,22 @@ public class Maze {
                         maze[i][0] = CellType.WALL;
                         maze[i][COLUMNS / 2 - 1] = CellType.WALL;
                         break;
-                    case (2):
                     case (3):
+                        maze[i][0] = CellType.WALL;
+                        maze[i][1] = CellType.BOOSTER;
+                        maze[i][2] = CellType.WALL;
+                        maze[i][3] = CellType.WALL;
+                        maze[i][4] = CellType.WALL;
+                        maze[i][5] = CellType.WALL;
+                        maze[i][7] = CellType.WALL;
+                        maze[i][8] = CellType.WALL;
+                        maze[i][9] = CellType.WALL;
+                        maze[i][10] = CellType.WALL;
+                        maze[i][11] = CellType.WALL;
+                        maze[i][26] = CellType.BOOSTER;
+                        maze[i][13] = CellType.WALL;
+                        break;
+                    case (2):
                     case (4):
                     case (21):
                     case (22):
@@ -219,8 +233,10 @@ public class Maze {
                         break;
                     case (23):
                         maze[i][0] = CellType.WALL;
+                        maze[i][1] = CellType.BOOSTER;
                         maze[i][4] = CellType.WALL;
                         maze[i][5] = CellType.WALL;
+                        maze[i][26] = CellType.BOOSTER;
                         break;
                     case (24):
                     case (25):

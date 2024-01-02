@@ -24,8 +24,8 @@ class Ghost {
     public Ghost(CellType[][] mazeArray) {
         maze = new Maze();
         this.mazeArray = mazeArray;
-        this.x = 14;  // Начальные координаты пакмана
-        this.y = 14;
+        this.x = 13;  // Начальные координаты пакмана
+        this.y = 12;
         this.direction = Direction.UP;  // Начальное направление
         //  count = 0;
         //this.angle = 45;  // Начальный угол для анимации открытой челюсти
@@ -68,6 +68,10 @@ class Ghost {
             case LEFT:
                 if (x > 0 && mazeArray[y][x - 1] != CellType.WALL) {
                     x--;  // Перемещение влево, если нет стены
+                    if(y == 13 && x == 14){
+                        y = 12;
+                        //x = 13;
+                    }
                 }
                 break;
             case RIGHT:
