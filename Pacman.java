@@ -1,13 +1,7 @@
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Arc;
-import javafx.scene.shape.ArcType;
-import javafx.scene.shape.Path;
-import javafx.util.Duration;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,44 +14,30 @@ class Pacman {
     private int initialX;
     @Getter@Setter
     private int initialY;
-
     private Direction direction;
-    private int angle;
-
-    private Maze maze;
+    private final Maze maze;
     @Getter
-    private CellType[][] mazeArray;
-  //  @Getter@Setter
-  //  private int count;
-
+    private final CellType[][] mazeArray;
     private final IntegerProperty count = new SimpleIntegerProperty(0);
-
-
-    //private GameManager gm;
     public Pacman(CellType[][] mazeArray) {
         maze = new Maze();
         this.mazeArray = mazeArray;
-        this.x = 1;  // Начальные координаты пакмана
+        this.x = 1;
         this.y = 1;
         this.initialX = x;
         this.initialY = y;
-        this.direction = Direction.RIGHT;  // Начальное направление пакмана
-        angle = 45;
-      //  count = 0;
-        //this.angle = 45;  // Начальный угол для анимации открытой челюсти
+        this.direction = Direction.RIGHT;
     }
 
     public void move() {
-        // Логика движения пакмана в зависимости от текущего направления
         switch (direction) {
             case UP:
                 if (y > 0 && mazeArray[y - 1][x] != CellType.WALL) {
                     if(mazeArray[y][x] == CellType.POINTS || mazeArray[y][x] == CellType.BOOSTER){
                         mazeArray[y][x] = CellType.EMPTY;
-                      //  count++;
                         setCount(getCount() + 1);
                     }
-                    y--;  // Перемещение вверх, если нет стены
+                    y--;
                 }
                 break;
             case DOWN:
@@ -66,7 +46,7 @@ class Pacman {
                         mazeArray[y][x] = CellType.EMPTY;
                         setCount(getCount() + 1);
                     }
-                    y++;  // Перемещение вниз, если нет стены
+                    y++;
                 }
                 break;
             case LEFT:
@@ -75,7 +55,7 @@ class Pacman {
                         mazeArray[y][x] = CellType.EMPTY;
                         setCount(getCount() + 1);
                     }
-                    x--;  // Перемещение влево, если нет стены
+                    x--;
                     if(x == 0 && y == 14){
                         mazeArray[y][x] = CellType.EMPTY;
                         setCount(getCount() + 1);
@@ -90,7 +70,7 @@ class Pacman {
                         mazeArray[y][x] = CellType.EMPTY;
                         setCount(getCount() + 1);
                     }
-                    x++;  // Перемещение вправо, если нет стены
+                    x++;
                     if(x == maze.getCOLUMNS() - 1 && y == 14){
                         mazeArray[y][x] = CellType.EMPTY;
                         setCount(getCount() + 1);
@@ -107,28 +87,18 @@ class Pacman {
 
     public void drawPacman(GraphicsContext gc) {
         switch (direction) {
-            case UP:
-               drawPacmanUp(gc);
-                break;
-            case DOWN:
-                drawPacmanDown(gc);
-                break;
-            case LEFT:
-                drawPacmanLeft(gc);
-                break;
-            case RIGHT:
-               drawPacmanRight(gc);
-                break;
+            case UP -> drawPacmanUp(gc);
+            case DOWN -> drawPacmanDown(gc);
+            case LEFT -> drawPacmanLeft(gc);
+            case RIGHT -> drawPacmanRight(gc);
         }
     }
-
     public void drawPacmanRight(GraphicsContext gc) {
         gc.setFill(Color.YELLOW);
         gc.fillArc(x * maze.getCELL_SIZE(), y * maze.getCELL_SIZE(),
                 maze.getCELL_SIZE(), maze.getCELL_SIZE(), 45, 270, javafx.scene.shape.ArcType.ROUND);
 
     }
-
     public void drawPacmanUp(GraphicsContext gc) {
         gc.setFill(Color.YELLOW);
         gc.fillArc(x * maze.getCELL_SIZE(), y * maze.getCELL_SIZE(),
@@ -148,17 +118,12 @@ class Pacman {
                 maze.getCELL_SIZE(), maze.getCELL_SIZE(), -45, 270, javafx.scene.shape.ArcType.ROUND);
 
     }
-//    public enum Direction {
-//        UP, DOWN, LEFT, RIGHT
-//    }
     public IntegerProperty countProperty() {
         return count;
     }
     public int getCount() {
         return count.get();
     }
-
-    // Метод для установки значения счетчика
     public void setCount(int value) {
         count.set(value);
     }

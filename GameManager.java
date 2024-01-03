@@ -1,12 +1,6 @@
-
-import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-
 import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.application.Application;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -23,9 +17,6 @@ public class GameManager extends Application {
     private static int ROWS;
     private static int COLUMNS;
     private Pacman pacman;
-    private  Maze maze;
-
-    private Timeline pacmanAnimation;
 
     private int loseAttempts = 0;
 
@@ -40,20 +31,31 @@ public class GameManager extends Application {
     private Label livesLabel;
     private Label scoreLabel;
 
+    private Booster booster1;
+    private Booster booster2;
+    private Booster booster3;
+    private Booster booster4;
+    private boolean boosterActive = false;
+
+
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) {
-        // Создаем лабиринт
-        maze = new Maze();
+
+        Maze maze = new Maze();
         mazeArray = maze.getMaze();
         pacman = new Pacman(mazeArray);
         ghost1 = new Ghost(mazeArray);
         ghost2 = new Ghost(mazeArray);
         ghost3 = new Ghost(mazeArray);
         ghost4 = new Ghost(mazeArray);
+        booster1 = new Booster(1, 3);
+        booster2 = new Booster(26, 3);
+        booster3 = new Booster(1, 23);
+        booster4 = new Booster(26, 23);
 
         CELL_SIZE = maze.getCELL_SIZE();
         ROWS = maze.getROWS();
@@ -71,19 +73,16 @@ public class GameManager extends Application {
 
         BorderPane root = new BorderPane();
 
-        // Создаем HBox для размещения элементов верхней панели
         HBox infoPanel = new HBox();
-        infoPanel.setSpacing(20); // расстояние между элементами
+        infoPanel.setSpacing(20);
         infoPanel.setStyle("-fx-background-color: black;");
 
-        // Создаем Label для отображения количества жизней
         livesLabel = new Label("Lives: " + (3 - loseAttempts));
-        livesLabel.setTextFill(Color.WHITE); // устанавливаем белый цвет текста
+        livesLabel.setTextFill(Color.WHITE);
         infoPanel.getChildren().add(livesLabel);
 
-        // Создаем Label для отображения счета
         scoreLabel = new Label("Score: " + pacman.getCount());
-        scoreLabel.setTextFill(Color.WHITE); // устанавливаем белый цвет текста
+        scoreLabel.setTextFill(Color.WHITE);
         infoPanel.getChildren().add(scoreLabel);
 
         root.setTop(infoPanel);
@@ -91,13 +90,7 @@ public class GameManager extends Application {
 
         Scene scene = new Scene(root, COLUMNS * CELL_SIZE, ROWS * CELL_SIZE + CELL_SIZE);
 
-
-        //   Scene scene = new Scene(root, COLUMNS * CELL_SIZE, ROWS * CELL_SIZE);
-
-
-        // Scene scene = new Scene(root, COLUMNS * CELL_SIZE, ROWS * CELL_SIZE);
-
-        Duration duration = Duration.millis(200);  // Уменьшенный интервал времени
+        Duration duration = Duration.millis(200);
         KeyFrame keyFrame = new KeyFrame(duration, event -> {
             movePacman(primaryStage);
             moveGhostsAndCheckCollision(primaryStage);
@@ -108,25 +101,20 @@ public class GameManager extends Application {
             ghost2.drawGhost(gc, Color.YELLOW);
             ghost3.drawGhost(gc, Color.PINK);
             ghost4.drawGhost(gc, Color.CYAN);
+
+            scoreLabel.setText("Score: " + pacman.getCount() + "/ 300");
+
         });
 
-        pacmanAnimation = new Timeline(keyFrame);
+        Timeline pacmanAnimation = new Timeline(keyFrame);
         pacmanAnimation.setCycleCount(Timeline.INDEFINITE);
 
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
-                case UP:
-                    pacman.setDirection(Direction.UP);
-                    break;
-                case DOWN:
-                    pacman.setDirection(Direction.DOWN);
-                    break;
-                case LEFT:
-                    pacman.setDirection(Direction.LEFT);
-                    break;
-                case RIGHT:
-                    pacman.setDirection(Direction.RIGHT);
-                    break;
+                case UP -> pacman.setDirection(Direction.UP);
+                case DOWN -> pacman.setDirection(Direction.DOWN);
+                case LEFT -> pacman.setDirection(Direction.LEFT);
+                case RIGHT -> pacman.setDirection(Direction.RIGHT);
             }
         });
 
@@ -140,53 +128,110 @@ public class GameManager extends Application {
     }
     private void moveGhostsAndCheckCollision(Stage primaryStage) {
         moveGhosts();
-        loseCheck(primaryStage);
+        if (!boosterActive) {
+            checkGhostCollision(primaryStage);
+        }else {
+            checkGhostEating();
+        }
     }
-    private void loseCheck(Stage primaryStage) {
-        // Проверяем, есть ли совпадение координат между пакманом и призраками
+    private void checkGhostCollision(Stage primaryStage) {
         if (pacman.getX() == ghost1.getX() && pacman.getY() == ghost1.getY() ||
                 pacman.getX() == ghost2.getX() && pacman.getY() == ghost2.getY() ||
                 pacman.getX() == ghost3.getX() && pacman.getY() == ghost3.getY() ||
                 pacman.getX() == ghost4.getX() && pacman.getY() == ghost4.getY()) {
-            // Совпадение координат, пакман проиграл, перемещаем его в начальную точку
-            System.out.println("You lost!");
-
-            // Увеличиваем счетчик попыток
-            loseAttempts++;
-
-            if (loseAttempts == 3) {
-                System.out.println("Game over!");
-                primaryStage.close();
-            }
-
-            // Перемещаем пакман в начальную точку
-            pacman.setX(pacman.getInitialX());
-            pacman.setY(pacman.getInitialY());
+            handleGhostCollision(primaryStage);
         }
-        livesLabel.setText("Lives: " + (3 - loseAttempts));
+    }
+    private void checkGhostEating() {
+        if (pacman.getX() == ghost1.getX() && pacman.getY() == ghost1.getY()){
+            eatGhost(ghost1);
+        }
+        else if(pacman.getX() == ghost2.getX() && pacman.getY() == ghost2.getY()){
+            eatGhost(ghost2);
 
-        // Обновляем Label с счетом
-        scoreLabel.setText("Score: " + pacman.getCount() + "/ 300");
+        }else if(pacman.getX() == ghost3.getX() && pacman.getY() == ghost3.getY()){
+            eatGhost(ghost3);
 
+        }else if(pacman.getX() == ghost4.getX() && pacman.getY() == ghost4.getY()){
+            eatGhost(ghost4);
+        }
+    }
+    private void eatGhost(Ghost ghost){
+        ghost.resetPosition();
     }
 
-
-    private void movePacman(Stage primaryStage) {
-        pacman.move();
-        loseCheck(primaryStage);
-    }
-    private void moveGhosts(){
+    private void moveGhosts() {
         ghost1.move();
         ghost2.move();
         ghost3.move();
         ghost4.move();
     }
 
+    private void movePacman(Stage primaryStage) {
+        pacman.move();
+        checkBoosterCollision();
+        if (!boosterActive) {
+            checkGhostCollision(primaryStage);
+        }else {
+            checkGhostEating();
+        }
+    }
 
+    private void checkBoosterCollision() {
+        if (booster1.isActive() && pacman.getX() == booster1.getX() && pacman.getY() == booster1.getY()) {
+            booster1.deactivate();
+            activateGhostVulnerability();
+        }
+        if (booster2.isActive() && pacman.getX() == booster2.getX() && pacman.getY() == booster2.getY()) {
+            booster2.deactivate();
+            activateGhostVulnerability();
+        }
+        if (booster3.isActive() && pacman.getX() == booster3.getX() && pacman.getY() == booster3.getY()) {
+            booster3.deactivate();
+            activateGhostVulnerability();
+        }
+        if (booster4.isActive() && pacman.getX() == booster4.getX() && pacman.getY() == booster4.getY()) {
+            booster4.deactivate();
+            activateGhostVulnerability();
+        }
+    }
+
+    private void activateGhostVulnerability() {
+        boosterActive = true;
+
+        ghost1.setVulnerable(true);
+        ghost2.setVulnerable(true);
+        ghost3.setVulnerable(true);
+        ghost4.setVulnerable(true);
+
+        int boosterDuration = 15;
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(boosterDuration), event -> {
+            boosterActive = false;
+            ghost1.setVulnerable(false);
+            ghost2.setVulnerable(false);
+            ghost3.setVulnerable(false);
+            ghost4.setVulnerable(false);
+        }));
+        timeline.play();
+    }
+
+    private void handleGhostCollision(Stage primaryStage) {
+        System.out.println("You lost!");
+
+        loseAttempts++;
+
+        if (loseAttempts == 3) {
+            System.out.println("Game over!");
+            primaryStage.close();
+        }
+
+        pacman.setX(pacman.getInitialX());
+        pacman.setY(pacman.getInitialY());
+
+        livesLabel.setText("Lives: " + (3 - loseAttempts));
+    }
 
     private void drawMaze(GraphicsContext gc) {
-       // CellType[][] finalMaze = pacman.getMazeArray();
-
         for (int i = 0; i < mazeArray.length; i++) {
             for (int j = 0; j < mazeArray[i].length; j++) {
                 if (mazeArray[i][j] == CellType.EMPTY) {
@@ -211,21 +256,13 @@ public class GameManager extends Application {
                     double centerY = i * CELL_SIZE + (CELL_SIZE - circleSize) / 2;
                     gc.fillOval(centerX, centerY, circleSize, circleSize);
 
-                }else if(mazeArray[i][j] == CellType.BOOSTER){
-                    gc.setFill(Color.BLACK);
-                    gc.fillRect(j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-
-                    gc.setFill(Color.WHITE);
-                    double circleSize = 6;
-                    double centerX = j * CELL_SIZE + (CELL_SIZE - circleSize) / 2;
-                    double centerY = i * CELL_SIZE + (CELL_SIZE - circleSize) / 2;
-                    gc.fillOval(centerX, centerY, circleSize, circleSize);
-
                 }
             }
         }
+        booster1.drawBooster(gc);
+        booster2.drawBooster(gc);
+        booster3.drawBooster(gc);
+        booster4.drawBooster(gc);
     }
-
-
 
 }
